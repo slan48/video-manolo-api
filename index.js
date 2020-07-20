@@ -9,7 +9,6 @@ require('dotenv').config();
 const app = express();
 
 require('./config/database');
-
 require('./config/passport')(passport);
 
 app.use(passport.initialize());
@@ -27,4 +26,6 @@ app.use(require('./routes'));
  */
 
 // Server listens on http://localhost:3000
-app.listen(3000);
+app.listen(process.env.PORT, () => {
+  console.log(`Server up and listening at port ${process.env.PORT}`);
+});
