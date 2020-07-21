@@ -9,6 +9,10 @@ require('dotenv').config();
 const app = express();
 
 require('./config/database');
+require('./models/user');
+require('./models/movie');
+require('./models/reservation');
+
 require('./config/passport')(passport);
 
 app.use(passport.initialize());
