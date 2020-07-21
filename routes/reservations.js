@@ -31,9 +31,11 @@ router.post('/start',
   async (req, res, next) => {
   try{
 
+    // Get user
     const user = await User.findOne({_id: req.user._id});
     if (!user) return res.status(404).json({success: false, message: 'User not found'})
 
+    // Get movie
     const movie = await Movie.findOne({_id: req.body.movieId});
     if (!movie) return res.status(404).json({success: false, message: 'Movie not found'})
     if (movie.stock < 1) return res.status(200).json({success: false, message: 'Sorry, the movie is out of stock'})
@@ -46,6 +48,11 @@ router.post('/start',
 
     reservation.save()
       .then(async (reservationSaved) => {
+        // Update user
+        user.reservations.push(reservationSaved._id)
+
+        // Update movie
+        movie.reservations.push(reservationSaved._id)
         movie.stock = movie.stock - 1;
         await movie.save();
         return reservationSaved;
