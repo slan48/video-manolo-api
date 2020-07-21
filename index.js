@@ -23,13 +23,12 @@ app.use(cors());
 /**
  * -------------- ROUTES ----------------
  */
-app.use(require('./routes'));
+app.use('/api', require('./routes'));
 
 /**
  * -------------- SERVER ----------------
  */
 
-// Server listens on http://localhost:3000
 app.listen(process.env.PORT, () => {
   console.log(`Server up and listening at port ${process.env.PORT}`);
 });

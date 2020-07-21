@@ -16,7 +16,8 @@ const UserSchema = new mongoose.Schema({
   },
   rut: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   address: {
     type: String,
