@@ -11,6 +11,10 @@ const MovieSchema = new mongoose.Schema({
   },
   actors: [String],
   directors: [String],
+  image: {
+    type: String,
+    required: true
+  },
   stock: {
     type: Number,
     required: true
@@ -18,4 +22,4 @@ const MovieSchema = new mongoose.Schema({
   reservations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reservation' }]
 }, {timestamps: true});
 
-mongoose.model('Movie', MovieSchema);
+module.exports = mongoose.model('Movie', MovieSchema);

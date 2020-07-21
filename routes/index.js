@@ -2,6 +2,8 @@ const router = require('express').Router();
 const { ValidationError } = require('express-json-validator-middleware');
 
 router.use('/users', require('./users'));
+router.use('/movies', require('./movies'));
+router.use('/reservations', require('./reservations'));
 
 // Error handler for validation errors
 router.use(function(err, req, res, next) {

@@ -12,7 +12,7 @@ router.post('/login', validate({body: userSchemas.loginUserSchema}), async (req,
     const user = await User.findOne({ email: req.body.email })
 
     if (!user) {
-      return res.status(401).json({ success: false, msg: "Invalid user or password" });
+      return res.status(401).json({ success: false, message: "Invalid user or password" });
     }
 
     const isValid = await helpers.validPassword(req.body.password, user.password);
@@ -31,20 +31,35 @@ router.post('/login', validate({body: userSchemas.loginUserSchema}), async (req,
 // Register a new user
 router.post('/register', validate({body: userSchemas.registerUserSchema}), async (req, res, next) => {
   try {
-    const passwordHash = await helpers.genPassword(req.body.password);
+    const {
+      email,
+      password,
+      name,
+      rut,
+      address,
+      phone
+    } = req.body;
+
+    const passwordHash = await helpers.genPassword(password);
+
     const newUser = new User({
-      ...req.body,
-      password: passwordHash
+      email,
+      password: passwordHash,
+      name,
+      rut,
+      address,
+      phone
     });
 
     newUser.save()
       .then((user) => {
         const tokenObject = helpers.issueJWT(user);
-        res.json({ success: true, userId: user._id, token: tokenObject.token, expiresIn: tokenObject.expires });
+        res.status(201).json({ success: true, userId: user._id, token: tokenObject.token, expiresIn: tokenObject.expires });
       })
       .catch(err => {
         next(err)
       })
+
   } catch (err) {
     next(err)
   }

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node utils/seed/seed.js"
   },
   "keywords": [],
   "author": "",
@@ -18,11 +19,13 @@
     "express": "^4.17.1",
     "express-json-validator-middleware": "^2.1.1",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.27.0",
     "mongoose": "^5.9.25",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
+    "mongo-seeding": "^3.4.1",
     "nodemon": "^2.0.4"
   }
 }
