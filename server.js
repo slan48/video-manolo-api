@@ -23,6 +23,7 @@ app.use(cors());
 /**
  * -------------- ROUTES ----------------
  */
+app.use('/', (req, res, next) => res.json('Bienvenido a Video Manolo API'));
 app.use('/api', require('./routes'));
 
 module.exports = app;
