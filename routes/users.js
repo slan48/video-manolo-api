@@ -1,10 +1,25 @@
 const mongoose = require('mongoose');
+const passport = require('passport');
 const router = require('express').Router();
 const User = mongoose.model('User');
 const helpers = require('../utils/helpers');
 const userSchemas = require('../utils/schemas/userSchemas');
 const { Validator } = require('express-json-validator-middleware');
 const validate = new Validator({allErrors: true}).validate;
+
+// Get all users (Only for admin user)
+router.get('/', passport.authenticate('jwt', {session: false}), async (req, res, next) => {
+  // Check if is admin to continue
+  if (!req.user.isAdmin) return res.status(401).json({success: false, message: 'Not authorized'})
+
+  try {
+    const users = await User.find();
+    return res.status(200).json({ success: true, users });
+  } catch (err) {
+    next(err)
+  }
+
+});
 
 // Validate an existing user and issue a JWT
 router.post('/login', validate({body: userSchemas.loginUserSchema}), async (req, res, next) => {
