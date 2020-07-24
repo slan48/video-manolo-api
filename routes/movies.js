@@ -41,7 +41,7 @@ router.get('/:id', validate({params: movieSchemas.movieIdSchema}), async (req, r
     if (movie){
       return res.status(200).json({ success: true, movie });
     } else{
-      return res.status(404).json({success: false, message: 'Not found'})
+      return res.status(404).json({success: false, message: 'Película no encontrada'})
     }
   } catch (err) {
     console.log(err);

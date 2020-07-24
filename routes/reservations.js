@@ -13,7 +13,7 @@ const moment = require('moment');
 // Get reservations
 router.get('/', passport.authenticate('jwt', {session: false}), async (req, res ,next) => {
   if (!req.user.isAdmin){
-    return res.status(401).json({success: false, message: 'Not authorized'})
+    return res.status(401).json({success: false, message: 'Usuario no autorizado'})
   }
 
   try{
@@ -33,12 +33,12 @@ router.post('/start',
 
     // Get user
     const user = await User.findOne({_id: req.user._id});
-    if (!user) return res.status(404).json({success: false, message: 'User not found'})
+    if (!user) return res.status(404).json({success: false, message: 'Usuario no encontrado'})
 
     // Get movie
     const movie = await Movie.findOne({_id: req.body.movieId});
-    if (!movie) return res.status(404).json({success: false, message: 'Movie not found'})
-    if (movie.stock < 1) return res.status(200).json({success: false, message: 'Sorry, the movie is out of stock'})
+    if (!movie) return res.status(404).json({success: false, message: 'Película no encontrada'})
+    if (movie.stock < 1) return res.status(200).json({success: false, message: 'La película que intenta reservar no cuenta con unidades disponibles, intente nuevamente en unos minutos'})
 
     const reservation = new Reservation({
       user: user._id,
@@ -77,12 +77,12 @@ router.patch('/complete/:id',
     try{
 
       const reservation = await Reservation.findOne({_id: req.params.id});
-      if (!reservation) return res.status(404).json({success: false, message: 'Reservation not found'})
+      if (!reservation) return res.status(404).json({success: false, message: 'Reservación no encontrada'})
 
       // Check if status is correct to continue
-      if (reservation.status === 'cancelled') return res.status(400).json({success: false, message: 'Reservation was cancelled by time to complete expired'})
+      if (reservation.status === 'cancelled') return res.status(400).json({success: false, message: 'La reservación ha sido cancelada debido a que se alcanzó el tiempo de expiración'})
 
-      if (reservation.status !== 'pending') return res.status(400).json({success: false, message: 'Current reservation need to be in status pending to change to reserved'})
+      if (reservation.status !== 'pending') return res.status(400).json({success: false, message: 'La reservación debe estar en estado "pending" para poder cambiar a estado "reserved"'})
 
       // Check if uncompleted reservation is expired to free stock of movie (Users have 5 minutes to complete reservation)
       const reservationStartedDate = moment(reservation.updatedAt);
@@ -95,14 +95,14 @@ router.patch('/complete/:id',
         movie.stock = movie.stock + 1;
         await movie.save();
 
-        return res.status(400).json({success: false, message: 'Reservation was cancelled by time to complete was expired'})
+        return res.status(400).json({success: false, message: 'La reservación ha sido cancelada debido a que se alcanzó el tiempo de expiración'})
       }
 
       // Complete reservation
       reservation.status = 'reserved';
       reservation.save()
         .then(reservationSaved => {
-          return res.status(200).json({success: true, message: 'Reservation completed', reservation: reservationSaved})
+          return res.status(200).json({success: true, message: 'Reservación completada', reservation: reservationSaved})
         })
         .catch(err => {
           return next(err)
@@ -120,12 +120,12 @@ router.patch('/return/:id',
   async (req, res, next) => {
     try{
       // Check if is admin to continue
-      if (!req.user.isAdmin) return res.status(401).json({success: false, message: 'Not authorized'})
+      if (!req.user.isAdmin) return res.status(401).json({success: false, message: 'Usuario no autorizado'})
 
       // Get and check reservation status
       const reservation = await Reservation.findOne({_id: req.params.id});
-      if (!reservation) return res.status(404).json({success: false, message: 'Reservation not found'})
-      if (reservation.status !== 'reserved') return res.status(400).json({success: false, message: 'Current reservation need to be in status reserved to change to returned'})
+      if (!reservation) return res.status(404).json({success: false, message: 'Reservación no encontrada'})
+      if (reservation.status !== 'reserved') return res.status(400).json({success: false, message: 'La reservación debe estar en estado "reserved" para poder cambiar a estado "returned"'})
 
       // Get movie
       const movie = await Movie.findOne({_id: reservation.movie})
@@ -139,7 +139,7 @@ router.patch('/return/:id',
           return reservationSaved;
         })
         .then(reservationSaved => {
-          return res.status(200).json({success: true, message: 'Movie returned successfully', reservation: reservationSaved})
+          return res.status(200).json({success: true, message: 'Película devuelta exitosamente', reservation: reservationSaved})
         })
         .catch(err => {
           return next(err)

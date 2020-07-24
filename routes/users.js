@@ -10,7 +10,7 @@ const validate = new Validator({allErrors: true}).validate;
 // Get all users (Only for admin user)
 router.get('/', passport.authenticate('jwt', {session: false}), async (req, res, next) => {
   // Check if is admin to continue
-  if (!req.user.isAdmin) return res.status(401).json({success: false, message: 'Not authorized'})
+  if (!req.user.isAdmin) return res.status(401).json({success: false, message: 'Usuario no autorizado'})
 
   try {
     const users = await User.find();
@@ -27,7 +27,7 @@ router.post('/login', validate({body: userSchemas.loginUserSchema}), async (req,
     const user = await User.findOne({ email: req.body.email })
 
     if (!user) {
-      return res.status(401).json({ success: false, message: "Invalid user or password" });
+      return res.status(401).json({ success: false, message: "Email o contraseña inválidos" });
     }
 
     const isValid = await helpers.validPassword(req.body.password, user.password);
@@ -36,7 +36,7 @@ router.post('/login', validate({body: userSchemas.loginUserSchema}), async (req,
       const tokenObject = helpers.issueJWT(user);
       return res.status(200).json({ success: true, token: tokenObject.token, expiresIn: tokenObject.expires });
     } else {
-      return res.status(401).json({ success: false, message: "Invalid user or password" });
+      return res.status(401).json({ success: false, message: "Email o contraseña inválidos" });
     }
   } catch (err) {
     next(err)
@@ -78,7 +78,6 @@ router.post('/register', validate({body: userSchemas.registerUserSchema}), async
   } catch (err) {
     next(err)
   }
-
 });
 
 module.exports = router;
