@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 const quantity = 10;
 
 let users = [{
-  email: 'admin@admin.com',
-  password: bcrypt.hashSync('admin', 10),
+  email: process.env.ADMIN_SEEDER_EMAIL,
+  password: bcrypt.hashSync(process.env.ADMIN_SEEDER_PASSWORD, 10),
   name: 'admin',
   rut: '12312312',
   address: 'Calle 123',

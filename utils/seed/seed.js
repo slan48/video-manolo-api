@@ -2,7 +2,10 @@ require('dotenv').config();
 const path = require('path');
 const { Seeder } = require('mongo-seeding');
 const config = {
-  database: process.env.NODE_ENV === 'testing' ? process.env.DB_STRING_TEST: process.env.DB_STRING,
+  database:
+      process.env.NODE_ENV === 'testing' ? process.env.DB_STRING_TEST :
+      process.env.NODE_ENV === 'production' ? process.env.DB_STRING_PROD :
+      process.env.DB_STRING,
   dropCollections: true
 };
 
